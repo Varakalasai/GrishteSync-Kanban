@@ -4,103 +4,80 @@
 # Suryasticsai | suryasticsai@gmail.com
 */
 // @ts-check
-const toDoCards = document.getElementById('to-do-cards');
-const inProgressCards = document.getElementById('in-progress-cards');
-const doneCards = document.getElementById('done-cards');
-const addToDo = document.getElementById('add-to-do');
-const addInProgress = document.getElementById('add-in-progress');
-const addDone = document.getElementById('add-done');
-let cards = [];
-let currentCard = null;
+'use strict';
 document.addEventListener('DOMContentLoaded', () => {
-  // Load existing cards
-  const storedCards = localStorage.getItem('cards');
-  if (storedCards) {
-    cards = JSON.parse(storedCards);
-    renderCards();
-  }
-  // Add event listeners
-  addToDo.addEventListener('click', addCard);
-  addInProgress.addEventListener('click', addCard);
-  addDone.addEventListener('click', addCard);
-  toDoCards.addEventListener('dragover', allowDrop);
-  inProgressCards.addEventListener('dragover', allowDrop);
-  doneCards.addEventListener('dragover', allowDrop);
-  toDoCards.addEventListener('drop', dropCard);
-  inProgressCards.addEventListener('drop', dropCard);
-  doneCards.addEventListener('drop', dropCard);
-});
-function addCard(event) {
-  const column = event.target.parentNode.id;
-  const card = {
-    id: Date.now(),
-    text: '',
-    column: column
-  };
-  cards.push(card);
-  renderCards();
-  saveCards();
-}
-function renderCards() {
-  toDoCards.innerHTML = '';
-  inProgressCards.innerHTML = '';
-  doneCards.innerHTML = '';
-  cards.forEach((card) => {
-    const cardElement = document.createElement('div');
-    cardElement.classList.add('card');
-    cardElement.setAttribute('draggable', 'true');
-    cardElement.setAttribute('id', card.id);
-    cardElement.innerHTML = `<p>${card.text}</p><button class="edit-card">Edit</button><button class="delete-card">Delete</button>`;
-    if (card.column === 'to-do') {
-      toDoCards.appendChild(cardElement);
-    } else if (card.column === 'in-progress') {
-      inProgressCards.appendChild(cardElement);
-    } else if (card.column === 'done') {
-      doneCards.appendChild(cardElement);
-    }
-    // Add event listeners
-    cardElement.addEventListener('dragstart', dragCard);
-    cardElement.querySelector('.edit-card').addEventListener('click', editCard);
-    cardElement.querySelector('.delete-card').addEventListener('click', deleteCard);
+  const toDoList = document.getElementById('to-do-list');
+  const inProgressList = document.getElementById('in-progress-list');
+  const doneList = document.getElementById('done-list');
+  const addTaskButton = document.getElementById('add-task');
+  const taskModal = document.getElementById('task-modal');
+  const addTaskModal = document.getElementById('add-task-modal');
+  const taskTitleInput = document.getElementById('task-title');
+  const taskDescriptionInput = document.getElementById('task-description');
+  const editTaskButton = document.getElementById('edit-task');
+  const deleteTaskButton = document.getElementById('delete-task');
+  const saveTaskButton = document.getElementById('save-task');
+  const taskNameInput = document.getElementById('task-name');
+  const taskDescriptionTextArea = document.getElementById('task-description');
+  let tasks = [];
+  let currentTask = null;
+  addTaskButton.addEventListener('click', () => {
+    addTaskModal.style.display = 'block';
   });
-}
-function saveCards() {
-  localStorage.setItem('cards', JSON.stringify(cards));
-}
-function allowDrop(event) {
-  event.preventDefault();
-}
-function dropCard(event) {
-  event.preventDefault();
-  const cardId = event.dataTransfer.getData('cardId');
-  const card = cards.find((card) => card.id === parseInt(cardId));
-  if (card) {
-    card.column = event.target.parentNode.id;
-    saveCards();
-    renderCards();
-  }
-}
-function dragCard(event) {
-  event.dataTransfer.setData('cardId', event.target.id);
-}
-function editCard(event) {
-  const cardId = event.target.parentNode.id;
-  const card = cards.find((card) => card.id === parseInt(cardId));
-  if (card) {
-    const newText = prompt('Enter new text:', card.text);
-    if (newText) {
-      card.text = newText;
-      saveCards();
-      renderCards();
+  saveTaskButton.addEventListener('click', () => {
+    const taskName = taskNameInput.value;
+    const taskDescription = taskDescriptionTextArea.value;
+    if (taskName && taskDescription) {
+      const newTask = {
+        id: Date.now(),
+        name: taskName,
+        description: taskDescription,
+        status: 'to-do'
+      };
+      tasks.push(newTask);
+      renderTasks();
+      addTaskModal.style.display = 'none';
+      taskNameInput.value = '';
+      taskDescriptionTextArea.value = '';
     }
+  });
+  editTaskButton.addEventListener('click', () => {
+    const taskName = taskTitleInput.textContent;
+    const taskDescription = taskDescriptionInput.textContent;
+    if (taskName && taskDescription) {
+      const updatedTask = tasks.find((task) => task.id === currentTask.id);
+      updatedTask.name = taskName;
+      updatedTask.description = taskDescription;
+      renderTasks();
+      taskModal.style.display = 'none';
+    }
+  });
+  deleteTaskButton.addEventListener('click', () => {
+    const taskId = currentTask.id;
+    tasks = tasks.filter((task) => task.id !== taskId);
+    renderTasks();
+    taskModal.style.display = 'none';
+  });
+  function renderTasks() {
+    toDoList.innerHTML = '';
+    inProgressList.innerHTML = '';
+    doneList.innerHTML = '';
+    tasks.forEach((task) => {
+      const taskElement = document.createElement('li');
+      taskElement.textContent = task.name;
+      taskElement.addEventListener('click', () => {
+        currentTask = task;
+        taskTitleInput.textContent = task.name;
+        taskDescriptionInput.textContent = task.description;
+        taskModal.style.display = 'block';
+      });
+      if (task.status === 'to-do') {
+        toDoList.appendChild(taskElement);
+      } else if (task.status === 'in-progress') {
+        inProgressList.appendChild(taskElement);
+      } else if (task.status === 'done') {
+        doneList.appendChild(taskElement);
+      }
+    });
   }
-}
-function deleteCard(event) {
-  const cardId = event.target.parentNode.id;
-  const cardIndex = cards.findIndex((card) => card.id === parseInt(cardId));
-  if (cardIndex !== -1) {
-    cards.splice(cardIndex, 1);
-    saveCards();
-    renderCards();
-  }
-}
+});
