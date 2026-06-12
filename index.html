@@ -1,0 +1,59 @@
+<!--
+# Created with GrishteSync
+# https://suryasticsai.github.io/GrishteSync
+# Suryasticsai | suryasticsai@gmail.com
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Kanban Board App">
+  <meta name="theme-color" content="#10b981">
+  <title>Kanban Board</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#">Board</a></li>
+        <li><a href="#">Settings</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="app">
+    <section class="board">
+      <div class="list" id="to-do">
+        <h2>To-Do</h2>
+        <ul>
+          <li draggable="true" data-id="1">Task 1</li>
+          <li draggable="true" data-id="2">Task 2</li>
+        </ul>
+        <button class="add-task">Add Task</button>
+      </div>
+      <div class="list" id="in-progress">
+        <h2>In Progress</h2>
+        <ul>
+          <li draggable="true" data-id="3">Task 3</li>
+        </ul>
+        <button class="add-task">Add Task</button>
+      </div>
+      <div class="list" id="done">
+        <h2>Done</h2>
+        <ul>
+          <li draggable="true" data-id="4">Task 4</li>
+        </ul>
+        <button class="add-task">Add Task</button>
+      </div>
+    </section>
+  </main>
+  <footer>
+    Made with GrishteSync | Suryasticsai | suryasticsai@gmail.com
+  </footer>
+  <script src="script.js"></script>
+  <noscript>
+    Please enable JavaScript to use this app.
+  </noscript>
+</body>
+</html>
